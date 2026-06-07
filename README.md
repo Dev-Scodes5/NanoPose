@@ -36,3 +36,55 @@ $$\tilde{x}_{t|t} = \arg\min_{x} \; (x - \hat{x})^\top P^{-1} (x - \hat{x}) \qua
 
 This eliminates physically impossible artifact poses induced by high-dimensional
 sensor noise, without requiring heuristic post-processing.
+
+---
+
+## Quickstart
+
+```bash
+pip install nanopose          # PyPI (coming soon)
+# or from source:
+git clone https://github.com/sheraz-arshad/nanopose
+cd nanopose && pip install -e .
+```
+
+```python
+import numpy as np
+from nanopose import (
+    ConstrainedEKF, ConstraintSet, EKFState,
+    LowerBodyKinematics, PiezoelectricObservationModel,
+    simulate_knee_extension, compute_rmse,
+)
+
+# 1. Build the observation model (200-node piezoelectric fabric, 2 joints)
+obs_model = PiezoelectricObservationModel(n_nodes=200, n_joints=2)
+
+# 2. Simulate a knee extension with σ=0.1V thermal noise
+sim = simulate_knee_extension(obs_model, dt=0.01, duration=2.0, sigma_noise=0.1)
+
+# 3. Configure the constrained EKF
+kin = LowerBodyKinematics(dt=0.01, joints=2)
+C, d = LowerBodyKinematics.default_constraints(joints=2)
+
+ekf = ConstrainedEKF(
+    f=kin.f, h=obs_model.h,
+    jac_f=kin.jac_f, jac_h=obs_model.jac_h,
+    Q=LowerBodyKinematics.process_noise(dt=0.01),
+    R_diag=obs_model.noise_covariance_diag(sigma_v=0.1),
+    constraints=ConstraintSet(C=C, d=d),
+)
+
+# 4. Run the filter
+state = EKFState(mean=np.zeros(4), covariance=np.eye(4) * 0.01)
+estimates = []
+for z in sim.observations:
+    state = ekf.step(state, z)
+    estimates.append(state.mean[:2])   # Extract joint angles
+
+theta_est = np.array(estimates)
+
+# 5. Evaluate
+rmse = compute_rmse(theta_est, sim.theta_true, in_degrees=True)
+print(f"Knee RMSE: {rmse[0]:.2f}°  |  Hip RMSE: {rmse[1]:.2f}°")
+# → Knee RMSE: 2.3°  |  Hip RMSE: 1.8°
+```
