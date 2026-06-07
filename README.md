@@ -117,3 +117,28 @@ Reproduce these results:
 python scripts/benchmark_flops.py
 jupyter notebook notebooks/01_reproduce_fig4.ipynb
 ```
+
+---
+
+## Repository Structure
+
+```
+
+├── nanopose/
+│   ├── filters/
+│   │   ├── woodbury.py          # Woodbury identity optimisation (Eq. 10)
+│   │   └── constrained_ekf.py   # NanoPose Algorithm 1 — core contribution
+│   ├── models/
+│   │   ├── biomechanical.py     # State-space model f(x), Jacobian F
+│   │   └── piezoelectric.py     # Observation model h(x), Jacobian H (Eq. 13)
+│   ├── simulation/
+│   │   └── sensor_array.py      # Synthetic nanosensor data generation
+│   └── viz/
+│       └── plots.py             # Publication-quality figure reproduction
+├── tests/
+│   ├── test_woodbury.py         # Numerical equivalence: Woodbury vs direct
+│   └── test_filter.py           # Integration: constraints, RMSE, stability
+├── scripts/
+│   └── benchmark_flops.py       # Wall-clock timing benchmark
+└── .github/workflows/ci.yml     # CI: pytest + ruff + mypy (Python 3.10–3.12)
+```
