@@ -88,3 +88,32 @@ rmse = compute_rmse(theta_est, sim.theta_true, in_degrees=True)
 print(f"Knee RMSE: {rmse[0]:.2f}°  |  Hip RMSE: {rmse[1]:.2f}°")
 # → Knee RMSE: 2.3°  |  Hip RMSE: 1.8°
 ```
+
+---
+
+## Results
+
+### Computational Complexity (Figure 1)
+
+| m (sensor nodes) | Standard EKF (FLOPs) | NanoPose Woodbury (FLOPs) | Reduction |
+|:----------------:|:--------------------:|:-------------------------:|:---------:|
+| 100              | 1.0 × 10⁶           | 1.1 × 10⁴               | ~91×      |
+| 500              | 1.25 × 10⁸          | 2.6 × 10⁴               | ~4,800×   |
+| 1000             | 1.0 × 10⁹           | 1.0 × 10⁵               | ~10,000×  |
+
+### Tracking Accuracy (Figure 4)
+
+Simulated seated knee extension (2s window, σ = 0.1V thermal noise):
+
+| Metric                   | Value         |
+|:-------------------------|:-------------:|
+| Convergence time         | < 0.2 seconds |
+| Mean Knee RMSE (steady)  | 2.3°          |
+| Constraint violations    | 0             |
+
+Reproduce these results:
+
+```bash
+python scripts/benchmark_flops.py
+jupyter notebook notebooks/01_reproduce_fig4.ipynb
+```
