@@ -142,3 +142,61 @@ jupyter notebook notebooks/01_reproduce_fig4.ipynb
 │   └── benchmark_flops.py       # Wall-clock timing benchmark
 └── .github/workflows/ci.yml     # CI: pytest + ruff + mypy (Python 3.10–3.12)
 ```
+
+---
+
+## Development
+
+```bash
+# Install with dev dependencies
+pip install -e ".[dev]"
+
+# Run tests
+pytest tests/ -v --cov=nanopose
+
+# Lint + type check
+ruff check nanopose/
+mypy nanopose/
+
+# Run benchmarks
+python scripts/benchmark_flops.py
+```
+
+All tests verify numerical equivalence of the Woodbury identity against naive
+direct inversion (tolerance: rtol=1e-5), covariance positive-definiteness
+throughout the filter trajectory, and constraint satisfaction for all posterior
+state estimates.
+
+---
+
+## Citation
+
+If you use NanoPose in your research, please cite the IEEE-NANO 2026 paper:
+
+```bibtex
+@inproceedings{arshad2026nanopose,
+  title     = {NanoPose: A Constrained Nonlinear Filtering Architecture for
+               High-Density Wearable Nanosensor Arrays},
+  author    = {Arshad, Sheraz},
+  booktitle = {Proceedings of the IEEE International Conference on Nanotechnology
+               (IEEE-NANO)},
+  year      = {2026},
+  note      = {Department of Mathematics and Statistics, McMaster University}
+}
+```
+
+---
+
+## License
+
+MIT — see [LICENSE](LICENSE).
+
+---
+
+## Related Work
+
+This implementation accompanies and extends:
+
+- **OccluPose** (CUCAI 2026, CSSC 2026, OUSAC 2026) — Gaussian Process framework for pose estimation under occlusion.
+- **OptiPose** — AI-powered sports biomechanics startup applying these methods
+  to real-time smartphone-based movement analysis.
