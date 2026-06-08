@@ -18,7 +18,7 @@ Standard optical pose estimation fails under occlusion, a frequent occurrence in
 
 NanoPose resolves this with two coupled innovations:
 
-**1. Woodbury-optimised innovation inversion (O(m³) → O(n³))**
+**1. Woodbury-optimized innovation inversion (O(m³) → O(n³))**
 
 By exploiting the diagonal structure of thermal noise and the Woodbury matrix
 identity, the inversion is reformulated in the *kinematic state space* (n ~ 10 DOF) rather than the *sensor space* (m ~ 1000 nodes):
